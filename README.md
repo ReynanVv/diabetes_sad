@@ -22,6 +22,9 @@ python src/train_model.py
 streamlit run app.py
 ```
 
+## Link para a aplicação:
+[https://reynanvv-diabetes-sad-app-w6i2sm.streamlit.app/](https://reynanvv-diabetes-sad-app-w6i2sm.streamlit.app/)
+
 ## 📁 Estrutura do Projeto
 
 ```

@@ -34,7 +34,6 @@ st.title("📊 Dashboard - Previsões Realizadas")
 if os.path.exists("data/predicoes.csv"):
     df = pd.read_csv("data/predicoes.csv")
 
-    # Contadores
     positivos = df[df["Resultado"] == "TEM diabetes"].shape[0]
     negativos = df[df["Resultado"] == "NÃO tem diabetes"].shape[0]
 
@@ -57,7 +56,7 @@ if os.path.exists("data/predicoes.csv"):
     col1.metric("Casos com risco de diabetes", positivos)
     col2.metric("Casos saudáveis", negativos)
 
-    # Análise cruzada entre consumo/produção de açúcar e taxa de diabetes
+    # Análise cruzada entre açúcar e diabetes
     if os.path.exists("data/diabetes.csv") and os.path.exists("data/sugar.csv"):
         diabetes_df = pd.read_csv("data/diabetes.csv")
         sugar_df = pd.read_csv("data/sugar.csv")
@@ -70,23 +69,37 @@ if os.path.exists("data/predicoes.csv"):
         sugar_melted["Value"] = sugar_melted["Value"].astype(str).str.replace(",", "").astype(float)
         sugar_avg = sugar_melted.groupby(["Name", "Action"])["Value"].mean().reset_index()
         sugar_pivot = sugar_avg.pivot(index="Name", columns="Action", values="Value").reset_index()
-
         sugar_pivot.columns.name = None
         sugar_pivot = sugar_pivot.rename(columns={"Name": "Country"})
 
         merged = pd.merge(diabetes_summary, sugar_pivot, on="Country")
 
-        st.subheader("📈 Relação entre Diabetes e Consumo/Produção de Açúcar")
+        st.subheader("📊 Correlação entre Diabetes e Açúcar")
 
+        corr_consumo = merged["DiabetesRate"].corr(merged["consumption"]) if "consumption" in merged else None
+        corr_producao = merged["DiabetesRate"].corr(merged["production"]) if "production" in merged else None
+
+        col1, col2 = st.columns(2)
+        if corr_consumo is not None:
+            col1.metric("Correlação (consumo x diabetes)", f"{corr_consumo:.2f}")
+        if corr_producao is not None:
+            col2.metric("Correlação (produção x diabetes)", f"{corr_producao:.2f}")
+
+        # Gráfico com rótulos de país
         if "consumption" in merged.columns:
             fig1 = px.scatter(
                 merged,
                 x="consumption",
                 y="DiabetesRate",
-                hover_name="Country",
-                labels={"consumption": "Consumo médio de açúcar (mil toneladas)", "DiabetesRate": "Taxa de Diabetes"},
-                title="Consumo de açúcar vs. Taxa de Diabetes"
+                text="Country",  # <-- Aqui adicionamos os rótulos
+                labels={
+                    "consumption": "Consumo médio de açúcar (mil toneladas)",
+                    "DiabetesRate": "Taxa de Diabetes"
+                },
+                title="Consumo de Açúcar vs. Taxa de Diabetes",
+                trendline="ols"
             )
+            fig1.update_traces(textposition='top center')
             st.plotly_chart(fig1, use_container_width=True)
 
         if "production" in merged.columns:
@@ -94,10 +107,15 @@ if os.path.exists("data/predicoes.csv"):
                 merged,
                 x="production",
                 y="DiabetesRate",
-                hover_name="Country",
-                labels={"production": "Produção média de açúcar (mil toneladas)", "DiabetesRate": "Taxa de Diabetes"},
-                title="Produção de açúcar vs. Taxa de Diabetes"
+                text="Country",  # <-- Aqui também
+                labels={
+                    "production": "Produção média de açúcar (mil toneladas)",
+                    "DiabetesRate": "Taxa de Diabetes"
+                },
+                title="Produção de Açúcar vs. Taxa de Diabetes",
+                trendline="ols"
             )
+            fig2.update_traces(textposition='top center')
             st.plotly_chart(fig2, use_container_width=True)
 
 else:

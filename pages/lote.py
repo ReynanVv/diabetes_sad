@@ -52,7 +52,7 @@ if arquivo is not None:
             st.success("✅ Arquivo carregado com sucesso!")
             st.dataframe(df.head())
 
-            caminho_dataset = "datasets/diabetes.csv"
+            caminho_dataset = "data/diabetes.csv"
             if os.path.exists(caminho_dataset):
                 df.to_csv(caminho_dataset, mode="a", header=False, index=False)
             else:
