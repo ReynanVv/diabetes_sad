@@ -1,7 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import pickle
-from sklearn.metrics import accuracy_score
 from sklearn.ensemble import RandomForestClassifier
 
 df = pd.read_csv('data/diabetes.csv')
@@ -17,8 +16,3 @@ model.fit(X_train, y_train)
 
 with open('models/diabetes_model.pkl', 'wb') as f:
     pickle.dump(model, f)
-
-accuracy = accuracy_score(y_test, model.predict(X_test))
-
-with open("models/metrics.pkl", "wb") as f:
-    pickle.dump({"accuracy": accuracy}, f)
