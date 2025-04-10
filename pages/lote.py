@@ -3,7 +3,6 @@ import pandas as pd
 import os
 
 
-# Título
 st.title("📦 Importação de Dados em Lote para o Dataset de Diabetes")
 
 st.markdown("""

@@ -85,13 +85,12 @@ if os.path.exists("data/predicoes.csv"):
         if corr_producao is not None:
             col2.metric("Correlação (produção x diabetes)", f"{corr_producao:.2f}")
 
-        # Gráfico com rótulos de país
         if "consumption" in merged.columns:
             fig1 = px.scatter(
                 merged,
                 x="consumption",
                 y="DiabetesRate",
-                text="Country",  # <-- Aqui adicionamos os rótulos
+                text="Country",
                 labels={
                     "consumption": "Consumo médio de açúcar (mil toneladas)",
                     "DiabetesRate": "Taxa de Diabetes"
@@ -107,7 +106,7 @@ if os.path.exists("data/predicoes.csv"):
                 merged,
                 x="production",
                 y="DiabetesRate",
-                text="Country",  # <-- Aqui também
+                text="Country",
                 labels={
                     "production": "Produção média de açúcar (mil toneladas)",
                     "DiabetesRate": "Taxa de Diabetes"
